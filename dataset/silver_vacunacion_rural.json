@@ -1,0 +1,163 @@
+{
+	"name": "silver_vacunacion_rural",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dw_vacunas",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "silver"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "record_id",
+				"type": "varchar"
+			},
+			{
+				"name": "sync_timestamp",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "device_id",
+				"type": "varchar"
+			},
+			{
+				"name": "patient_id",
+				"type": "varchar"
+			},
+			{
+				"name": "patient_ci",
+				"type": "varchar"
+			},
+			{
+				"name": "patient_name",
+				"type": "varchar"
+			},
+			{
+				"name": "patient_last_name_1",
+				"type": "varchar"
+			},
+			{
+				"name": "patient_last_name_2",
+				"type": "varchar"
+			},
+			{
+				"name": "patient_sex",
+				"type": "char"
+			},
+			{
+				"name": "patient_birth_date",
+				"type": "date"
+			},
+			{
+				"name": "patient_department",
+				"type": "varchar"
+			},
+			{
+				"name": "patient_municipality",
+				"type": "varchar"
+			},
+			{
+				"name": "patient_community",
+				"type": "varchar"
+			},
+			{
+				"name": "patient_indigenous",
+				"type": "bit"
+			},
+			{
+				"name": "vaccination_date",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "vaccine_code",
+				"type": "varchar"
+			},
+			{
+				"name": "vaccine_name",
+				"type": "varchar"
+			},
+			{
+				"name": "dose_number",
+				"type": "decimal",
+				"precision": 3,
+				"scale": 1
+			},
+			{
+				"name": "facility_code",
+				"type": "varchar"
+			},
+			{
+				"name": "facility_name",
+				"type": "varchar"
+			},
+			{
+				"name": "lot_number",
+				"type": "varchar"
+			},
+			{
+				"name": "storage_temp_celsius",
+				"type": "decimal",
+				"precision": 5,
+				"scale": 2
+			},
+			{
+				"name": "patient_age_days",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "administration_route",
+				"type": "varchar"
+			},
+			{
+				"name": "gps_latitude",
+				"type": "decimal",
+				"precision": 10,
+				"scale": 7
+			},
+			{
+				"name": "gps_longitude",
+				"type": "decimal",
+				"precision": 10,
+				"scale": 7
+			},
+			{
+				"name": "gps_accuracy_meters",
+				"type": "decimal",
+				"precision": 7,
+				"scale": 2
+			},
+			{
+				"name": "observations",
+				"type": "varchar"
+			},
+			{
+				"name": "patient_age_months",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "cold_chain_alert",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "load_timestamp",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "silver",
+			"table": "vacunacion_rural"
+		}
+	}
+}
