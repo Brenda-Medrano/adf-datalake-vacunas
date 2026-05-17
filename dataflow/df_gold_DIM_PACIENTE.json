@@ -1,0 +1,90 @@
+{
+	"name": "df_gold_DIM_PACIENTE",
+	"properties": {
+		"folder": {
+			"name": "gold"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "silver_vacunacion_lapaz",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "gold_DIM_PACIENTE",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          paciente_id as string,",
+				"          ci_hash as string,",
+				"          nombre_completo as string,",
+				"          sexo as string,",
+				"          sexo_descripcion as string,",
+				"          fecha_nacimiento as date,",
+				"          anio_nacimiento as integer,",
+				"          grupo_etario as string,",
+				"          municipio_residencia as string,",
+				"          departamento_residencia as string,",
+				"          comunidad_indigena as boolean,",
+				"          fuente_datos as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source1",
+				"source1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          paciente_sk as integer,",
+				"          paciente_id as string,",
+				"          ci_hash as string,",
+				"          nombre_completo as string,",
+				"          sexo as string,",
+				"          sexo_descripcion as string,",
+				"          fecha_nacimiento as date,",
+				"          anio_nacimiento as integer,",
+				"          grupo_etario as string,",
+				"          municipio_residencia as string,",
+				"          departamento_residencia as string,",
+				"          comunidad_indigena as boolean,",
+				"          fuente_datos as string,",
+				"          fecha_carga_gold as timestamp",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          paciente_id,",
+				"          ci_hash,",
+				"          nombre_completo,",
+				"          sexo,",
+				"          sexo_descripcion,",
+				"          fecha_nacimiento,",
+				"          anio_nacimiento,",
+				"          grupo_etario,",
+				"          municipio_residencia,",
+				"          departamento_residencia,",
+				"          comunidad_indigena,",
+				"          fuente_datos",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}

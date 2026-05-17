@@ -1,0 +1,124 @@
+{
+	"name": "gold_DIM_ESTABLECIMIENTO",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dw_vacunas",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "gold"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "establecimiento_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "establecimiento_id",
+				"type": "varchar"
+			},
+			{
+				"name": "nombre_establecimiento",
+				"type": "varchar"
+			},
+			{
+				"name": "tipo_establecimiento",
+				"type": "varchar"
+			},
+			{
+				"name": "nivel_atencion",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "nivel_atencion_desc",
+				"type": "varchar"
+			},
+			{
+				"name": "zona",
+				"type": "varchar"
+			},
+			{
+				"name": "tiene_cadena_frio",
+				"type": "bit"
+			},
+			{
+				"name": "activo",
+				"type": "bit"
+			},
+			{
+				"name": "sedes",
+				"type": "varchar"
+			},
+			{
+				"name": "red_salud",
+				"type": "varchar"
+			},
+			{
+				"name": "municipio",
+				"type": "varchar"
+			},
+			{
+				"name": "municipio_id",
+				"type": "varchar"
+			},
+			{
+				"name": "departamento",
+				"type": "varchar"
+			},
+			{
+				"name": "codigo_departamento",
+				"type": "varchar"
+			},
+			{
+				"name": "zona_geografica",
+				"type": "varchar"
+			},
+			{
+				"name": "es_capital_departamental",
+				"type": "bit"
+			},
+			{
+				"name": "latitud",
+				"type": "decimal",
+				"precision": 10,
+				"scale": 7
+			},
+			{
+				"name": "longitud",
+				"type": "decimal",
+				"precision": 10,
+				"scale": 7
+			},
+			{
+				"name": "fecha_inicio_vigencia",
+				"type": "date"
+			},
+			{
+				"name": "fecha_fin_vigencia",
+				"type": "date"
+			},
+			{
+				"name": "es_registro_actual",
+				"type": "bit"
+			},
+			{
+				"name": "fuente_datos",
+				"type": "varchar"
+			},
+			{
+				"name": "fecha_carga_gold",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "DIM_ESTABLECIMIENTO"
+		}
+	}
+}

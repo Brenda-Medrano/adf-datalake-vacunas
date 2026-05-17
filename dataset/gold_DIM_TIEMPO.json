@@ -1,0 +1,102 @@
+{
+	"name": "gold_DIM_TIEMPO",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dw_vacunas",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "gold"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "tiempo_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "fecha_completa",
+				"type": "date"
+			},
+			{
+				"name": "dia",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "dia_semana_num",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "dia_semana_nombre",
+				"type": "varchar"
+			},
+			{
+				"name": "es_fin_de_semana",
+				"type": "bit"
+			},
+			{
+				"name": "semana_anio",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "semana_epidemiologica",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "mes",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "mes_nombre",
+				"type": "varchar"
+			},
+			{
+				"name": "trimestre",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "trimestre_nombre",
+				"type": "varchar"
+			},
+			{
+				"name": "anio",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "anio_mes",
+				"type": "char"
+			},
+			{
+				"name": "es_temporada_influenza",
+				"type": "bit"
+			},
+			{
+				"name": "es_temporada_sarampion",
+				"type": "bit"
+			},
+			{
+				"name": "es_dia_feriado",
+				"type": "bit"
+			},
+			{
+				"name": "fecha_carga_gold",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "DIM_TIEMPO"
+		}
+	}
+}

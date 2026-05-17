@@ -1,0 +1,80 @@
+{
+	"name": "gold_DIM_PACIENTE",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dw_vacunas",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "gold"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "paciente_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "paciente_id",
+				"type": "varchar"
+			},
+			{
+				"name": "ci_hash",
+				"type": "varchar"
+			},
+			{
+				"name": "nombre_completo",
+				"type": "varchar"
+			},
+			{
+				"name": "sexo",
+				"type": "char"
+			},
+			{
+				"name": "sexo_descripcion",
+				"type": "varchar"
+			},
+			{
+				"name": "fecha_nacimiento",
+				"type": "date"
+			},
+			{
+				"name": "anio_nacimiento",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "grupo_etario",
+				"type": "varchar"
+			},
+			{
+				"name": "municipio_residencia",
+				"type": "varchar"
+			},
+			{
+				"name": "departamento_residencia",
+				"type": "varchar"
+			},
+			{
+				"name": "comunidad_indigena",
+				"type": "bit"
+			},
+			{
+				"name": "fuente_datos",
+				"type": "varchar"
+			},
+			{
+				"name": "fecha_carga_gold",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "DIM_PACIENTE"
+		}
+	}
+}

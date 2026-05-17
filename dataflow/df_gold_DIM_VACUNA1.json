@@ -1,0 +1,101 @@
+{
+	"name": "df_gold_DIM_VACUNA1",
+	"properties": {
+		"folder": {
+			"name": "gold"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "silver_catalogo_vacunas",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "gold_DIM_VACUNA",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          vacuna_id as string,",
+				"          vacuna_nombre as string,",
+				"          enfermedad_previene as string,",
+				"          grupo_pai as string,",
+				"          es_campana_estacional as integer,",
+				"          numero_dosis_total as integer,",
+				"          dosis_descripcion as string,",
+				"          edad_aplicacion_descripcion as string,",
+				"          edad_minima_dias as integer,",
+				"          edad_maxima_dias as integer,",
+				"          intervalo_minimo_dias as integer,",
+				"          via_administracion as string,",
+				"          sitio_aplicacion as string,",
+				"          dosis_ml as decimal(5,2),",
+				"          condicion_especial as string,",
+				"          fuente_datos as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source1",
+				"source1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          vacuna_sk as integer,",
+				"          vacuna_id as string,",
+				"          vacuna_nombre as string,",
+				"          enfermedad_previene as string,",
+				"          grupo_pai as string,",
+				"          es_campana_estacional as boolean,",
+				"          numero_dosis_total as integer,",
+				"          dosis_descripcion as string,",
+				"          edad_aplicacion_descripcion as string,",
+				"          edad_minima_dias as integer,",
+				"          edad_maxima_dias as integer,",
+				"          intervalo_minimo_dias as integer,",
+				"          via_administracion as string,",
+				"          sitio_aplicacion as string,",
+				"          dosis_ml as decimal(5,2),",
+				"          condicion_especial as string,",
+				"          fuente_datos as string,",
+				"          fecha_carga_gold as timestamp",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          vacuna_id,",
+				"          vacuna_nombre,",
+				"          enfermedad_previene,",
+				"          grupo_pai,",
+				"          numero_dosis_total,",
+				"          dosis_descripcion,",
+				"          edad_aplicacion_descripcion,",
+				"          edad_minima_dias,",
+				"          edad_maxima_dias,",
+				"          intervalo_minimo_dias,",
+				"          via_administracion,",
+				"          sitio_aplicacion,",
+				"          dosis_ml,",
+				"          condicion_especial,",
+				"          fuente_datos",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}

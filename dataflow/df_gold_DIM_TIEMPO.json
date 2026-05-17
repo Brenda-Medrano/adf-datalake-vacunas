@@ -1,0 +1,82 @@
+{
+	"name": "df_gold_DIM_TIEMPO",
+	"properties": {
+		"folder": {
+			"name": "gold"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "silver_vacunacion_scz",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "gold_DIM_TIEMPO",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          paciente_id as string,",
+				"          ci_hash as string,",
+				"          nombre_completo as string,",
+				"          sexo as string,",
+				"          sexo_descripcion as string,",
+				"          fecha_nacimiento as date,",
+				"          anio_nacimiento as integer,",
+				"          municipio_residencia as string,",
+				"          comunidad_indigena as boolean,",
+				"          fuente_datos as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source1",
+				"source1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          tiempo_sk as integer,",
+				"          fecha_completa as date,",
+				"          dia as integer,",
+				"          dia_semana_num as integer,",
+				"          dia_semana_nombre as string,",
+				"          es_fin_de_semana as boolean,",
+				"          semana_anio as integer,",
+				"          semana_epidemiologica as integer,",
+				"          mes as integer,",
+				"          mes_nombre as string,",
+				"          trimestre as integer,",
+				"          trimestre_nombre as string,",
+				"          anio as integer,",
+				"          anio_mes as string,",
+				"          es_temporada_influenza as boolean,",
+				"          es_temporada_sarampion as boolean,",
+				"          es_dia_feriado as boolean,",
+				"          fecha_carga_gold as timestamp",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          fecha_completa = fecha_nacimiento,",
+				"          dia = paciente_id",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}

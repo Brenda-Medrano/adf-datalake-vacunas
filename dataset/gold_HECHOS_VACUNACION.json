@@ -1,0 +1,135 @@
+{
+	"name": "gold_HECHOS_VACUNACION",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dw_vacunas",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "gold"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "vacunacion_sk",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "tiempo_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "establecimiento_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "vacuna_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "paciente_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "registro_id_origen",
+				"type": "varchar"
+			},
+			{
+				"name": "cantidad_dosis",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "edad_dias_aplicacion",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "edad_meses_aplicacion",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "temperatura_conservacion",
+				"type": "decimal",
+				"precision": 5,
+				"scale": 2
+			},
+			{
+				"name": "aplicacion_oportuna",
+				"type": "bit"
+			},
+			{
+				"name": "alerta_cadena_frio",
+				"type": "bit"
+			},
+			{
+				"name": "fuera_rango_edad",
+				"type": "bit"
+			},
+			{
+				"name": "es_primera_dosis",
+				"type": "bit"
+			},
+			{
+				"name": "numero_dosis",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "lote_vacuna",
+				"type": "varchar"
+			},
+			{
+				"name": "via_aplicacion",
+				"type": "varchar"
+			},
+			{
+				"name": "fuente_datos",
+				"type": "varchar"
+			},
+			{
+				"name": "device_id",
+				"type": "varchar"
+			},
+			{
+				"name": "gps_latitud",
+				"type": "decimal",
+				"precision": 10,
+				"scale": 7
+			},
+			{
+				"name": "gps_longitud",
+				"type": "decimal",
+				"precision": 10,
+				"scale": 7
+			},
+			{
+				"name": "gps_precision_metros",
+				"type": "decimal",
+				"precision": 7,
+				"scale": 2
+			},
+			{
+				"name": "observaciones",
+				"type": "varchar"
+			},
+			{
+				"name": "fecha_carga_gold",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "HECHOS_VACUNACION"
+		}
+	}
+}
