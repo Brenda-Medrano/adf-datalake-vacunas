@@ -1,0 +1,96 @@
+{
+	"name": "bronze_catalogo_departamentos",
+	"properties": {
+		"folder": {
+			"name": "bronze"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "catalogo_departamentos_csv",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "silver_catalogo_departamentos",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "derivedColumn3"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          municipio_id as string,",
+				"          municipio_nombre as string,",
+				"          departamento as string,",
+				"          codigo_departamento as string,",
+				"          zona_geografica as string,",
+				"          es_capital_departamental as string,",
+				"          poblacion_depto_estimada as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 derive(municipio_id = trim(municipio_id),",
+				"          municipio_nombre = lower(trim(municipio_nombre)) ,",
+				"          departamento = lower(trim(departamento)),",
+				"          codigo_departamento = trim(codigo_departamento),",
+				"          zona_geografica = trim(zona_geografica)) ~> derivedColumn1",
+				"derivedColumn1 derive(es_capital_departamental =  iif(lower(trim(es_capital_departamental))=='true', true(), false()),",
+				"          poblacion_depto_estimada = toInteger(trim(poblacion_depto_estimada)),",
+				"          municipio_id = upper(trim(municipio_id)) ,",
+				"          codigo_departamento = upper(trim(codigo_departamento)) ) ~> derivedColumn2",
+				"derivedColumn2 derive(zona_geografica = initCap(lower(trim(zona_geografica))),",
+				"          municipio_nombre = initCap(lower(trim(municipio_nombre))),",
+				"          departamento = initCap(lower(trim(departamento))) ,",
+				"          poblacion_depto_estimada = iif(isNull(poblacion_depto_estimada) || poblacion_depto_estimada <= 0, 0, poblacion_depto_estimada)) ~> derivedColumn3",
+				"derivedColumn3 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          municipio_id as string,",
+				"          municipio_nombre as string,",
+				"          departamento as string,",
+				"          codigo_departamento as string,",
+				"          zona_geografica as string,",
+				"          es_capital_departamental as boolean,",
+				"          poblacion_depto_estimada as integer,",
+				"          fecha_carga_silver as timestamp",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          municipio_id,",
+				"          municipio_nombre,",
+				"          departamento,",
+				"          codigo_departamento,",
+				"          zona_geografica,",
+				"          es_capital_departamental,",
+				"          poblacion_depto_estimada",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}
