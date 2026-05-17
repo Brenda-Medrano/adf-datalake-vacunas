@@ -1,0 +1,2023 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Nombre de instancia de Data Factory",
+			"defaultValue": "adf-pai-bolivia95333465"
+		},
+		"datalake_vacunas_connectionString": {
+			"type": "secureString",
+			"metadata": "Cadena protegida para \"connectionString\"de \"datalake_vacunas\""
+		},
+		"dw_vacunas_password": {
+			"type": "secureString",
+			"metadata": "Cadena protegida para \"password\"de \"dw_vacunas\""
+		},
+		"dw_vacunas_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "sqlbolivia95333465.database.windows.net"
+		},
+		"dw_vacunas_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "dw_vacunas"
+		},
+		"dw_vacunas_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "adminsql"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/datalake_vacunas')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('datalake_vacunas_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dw_vacunas')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('dw_vacunas_properties_typeProperties_server')]",
+					"database": "[parameters('dw_vacunas_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('dw_vacunas_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('dw_vacunas_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/catalogo_departamentos_csv')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "datalake_vacunas",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "bronze"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "catalogo_departamentos.csv",
+						"container": "bronze"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "municipio_id",
+						"type": "String"
+					},
+					{
+						"name": "municipio_nombre",
+						"type": "String"
+					},
+					{
+						"name": "departamento",
+						"type": "String"
+					},
+					{
+						"name": "codigo_departamento",
+						"type": "String"
+					},
+					{
+						"name": "zona_geografica",
+						"type": "String"
+					},
+					{
+						"name": "es_capital_departamental",
+						"type": "String"
+					},
+					{
+						"name": "poblacion_depto_estimada",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/datalake_vacunas')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/catalogo_establecimientos_csv')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "datalake_vacunas",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "bronze"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "catalogo_establecimientos.csv",
+						"container": "bronze"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "establecimiento_id",
+						"type": "String"
+					},
+					{
+						"name": "nombre_establecimiento",
+						"type": "String"
+					},
+					{
+						"name": "tipo_establecimiento",
+						"type": "String"
+					},
+					{
+						"name": "nivel_atencion",
+						"type": "String"
+					},
+					{
+						"name": "zona",
+						"type": "String"
+					},
+					{
+						"name": "sedes",
+						"type": "String"
+					},
+					{
+						"name": "red_salud",
+						"type": "String"
+					},
+					{
+						"name": "departamento",
+						"type": "String"
+					},
+					{
+						"name": "municipio",
+						"type": "String"
+					},
+					{
+						"name": "latitud",
+						"type": "String"
+					},
+					{
+						"name": "longitud",
+						"type": "String"
+					},
+					{
+						"name": "tiene_cadena_frio",
+						"type": "String"
+					},
+					{
+						"name": "activo",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/datalake_vacunas')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/catalogo_vacunas_csv')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "datalake_vacunas",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "bronze"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "catalogo_vacunas.csv",
+						"container": "bronze"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "vacuna_id",
+						"type": "String"
+					},
+					{
+						"name": "vacuna_nombre",
+						"type": "String"
+					},
+					{
+						"name": "enfermedad_previene",
+						"type": "String"
+					},
+					{
+						"name": "grupo_pai",
+						"type": "String"
+					},
+					{
+						"name": "numero_dosis",
+						"type": "String"
+					},
+					{
+						"name": "dosis_descripcion",
+						"type": "String"
+					},
+					{
+						"name": "edad_aplicacion_descripcion",
+						"type": "String"
+					},
+					{
+						"name": "edad_minima_dias",
+						"type": "String"
+					},
+					{
+						"name": "edad_maxima_dias",
+						"type": "String"
+					},
+					{
+						"name": "intervalo_minimo_dias",
+						"type": "String"
+					},
+					{
+						"name": "via_administracion",
+						"type": "String"
+					},
+					{
+						"name": "sitio_aplicacion",
+						"type": "String"
+					},
+					{
+						"name": "dosis_ml",
+						"type": "String"
+					},
+					{
+						"name": "condicion_especial",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/datalake_vacunas')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/gold_DIM_ESTABLECIMIENTO')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dw_vacunas",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "gold"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "establecimiento_sk",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "establecimiento_id",
+						"type": "varchar"
+					},
+					{
+						"name": "nombre_establecimiento",
+						"type": "varchar"
+					},
+					{
+						"name": "tipo_establecimiento",
+						"type": "varchar"
+					},
+					{
+						"name": "nivel_atencion",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "nivel_atencion_desc",
+						"type": "varchar"
+					},
+					{
+						"name": "zona",
+						"type": "varchar"
+					},
+					{
+						"name": "tiene_cadena_frio",
+						"type": "bit"
+					},
+					{
+						"name": "activo",
+						"type": "bit"
+					},
+					{
+						"name": "sedes",
+						"type": "varchar"
+					},
+					{
+						"name": "red_salud",
+						"type": "varchar"
+					},
+					{
+						"name": "municipio",
+						"type": "varchar"
+					},
+					{
+						"name": "municipio_id",
+						"type": "varchar"
+					},
+					{
+						"name": "departamento",
+						"type": "varchar"
+					},
+					{
+						"name": "codigo_departamento",
+						"type": "varchar"
+					},
+					{
+						"name": "zona_geografica",
+						"type": "varchar"
+					},
+					{
+						"name": "es_capital_departamental",
+						"type": "bit"
+					},
+					{
+						"name": "latitud",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 7
+					},
+					{
+						"name": "longitud",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 7
+					},
+					{
+						"name": "fecha_inicio_vigencia",
+						"type": "date"
+					},
+					{
+						"name": "fecha_fin_vigencia",
+						"type": "date"
+					},
+					{
+						"name": "es_registro_actual",
+						"type": "bit"
+					},
+					{
+						"name": "fuente_datos",
+						"type": "varchar"
+					},
+					{
+						"name": "fecha_carga_gold",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "gold",
+					"table": "DIM_ESTABLECIMIENTO"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dw_vacunas')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/gold_DIM_PACIENTE')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dw_vacunas",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "gold"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "paciente_sk",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "paciente_id",
+						"type": "varchar"
+					},
+					{
+						"name": "ci_hash",
+						"type": "varchar"
+					},
+					{
+						"name": "nombre_completo",
+						"type": "varchar"
+					},
+					{
+						"name": "sexo",
+						"type": "char"
+					},
+					{
+						"name": "sexo_descripcion",
+						"type": "varchar"
+					},
+					{
+						"name": "fecha_nacimiento",
+						"type": "date"
+					},
+					{
+						"name": "anio_nacimiento",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "grupo_etario",
+						"type": "varchar"
+					},
+					{
+						"name": "municipio_residencia",
+						"type": "varchar"
+					},
+					{
+						"name": "departamento_residencia",
+						"type": "varchar"
+					},
+					{
+						"name": "comunidad_indigena",
+						"type": "bit"
+					},
+					{
+						"name": "fuente_datos",
+						"type": "varchar"
+					},
+					{
+						"name": "fecha_carga_gold",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "gold",
+					"table": "DIM_PACIENTE"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dw_vacunas')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/gold_DIM_TIEMPO')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dw_vacunas",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "gold"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "tiempo_sk",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "fecha_completa",
+						"type": "date"
+					},
+					{
+						"name": "dia",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "dia_semana_num",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "dia_semana_nombre",
+						"type": "varchar"
+					},
+					{
+						"name": "es_fin_de_semana",
+						"type": "bit"
+					},
+					{
+						"name": "semana_anio",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "semana_epidemiologica",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "mes",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "mes_nombre",
+						"type": "varchar"
+					},
+					{
+						"name": "trimestre",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "trimestre_nombre",
+						"type": "varchar"
+					},
+					{
+						"name": "anio",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "anio_mes",
+						"type": "char"
+					},
+					{
+						"name": "es_temporada_influenza",
+						"type": "bit"
+					},
+					{
+						"name": "es_temporada_sarampion",
+						"type": "bit"
+					},
+					{
+						"name": "es_dia_feriado",
+						"type": "bit"
+					},
+					{
+						"name": "fecha_carga_gold",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "gold",
+					"table": "DIM_TIEMPO"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dw_vacunas')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/gold_DIM_VACUNA')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dw_vacunas",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "gold"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "vacuna_sk",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "vacuna_id",
+						"type": "varchar"
+					},
+					{
+						"name": "vacuna_nombre",
+						"type": "varchar"
+					},
+					{
+						"name": "enfermedad_previene",
+						"type": "varchar"
+					},
+					{
+						"name": "grupo_pai",
+						"type": "varchar"
+					},
+					{
+						"name": "es_campana_estacional",
+						"type": "bit"
+					},
+					{
+						"name": "numero_dosis_total",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "dosis_descripcion",
+						"type": "varchar"
+					},
+					{
+						"name": "edad_aplicacion_descripcion",
+						"type": "varchar"
+					},
+					{
+						"name": "edad_minima_dias",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "edad_maxima_dias",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "intervalo_minimo_dias",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "via_administracion",
+						"type": "varchar"
+					},
+					{
+						"name": "sitio_aplicacion",
+						"type": "varchar"
+					},
+					{
+						"name": "dosis_ml",
+						"type": "decimal",
+						"precision": 5,
+						"scale": 2
+					},
+					{
+						"name": "condicion_especial",
+						"type": "varchar"
+					},
+					{
+						"name": "fuente_datos",
+						"type": "varchar"
+					},
+					{
+						"name": "fecha_carga_gold",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "gold",
+					"table": "DIM_VACUNA"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dw_vacunas')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/gold_HECHOS_VACUNACION')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dw_vacunas",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "gold"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "vacunacion_sk",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "tiempo_sk",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "establecimiento_sk",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "vacuna_sk",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "paciente_sk",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "registro_id_origen",
+						"type": "varchar"
+					},
+					{
+						"name": "cantidad_dosis",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "edad_dias_aplicacion",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "edad_meses_aplicacion",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "temperatura_conservacion",
+						"type": "decimal",
+						"precision": 5,
+						"scale": 2
+					},
+					{
+						"name": "aplicacion_oportuna",
+						"type": "bit"
+					},
+					{
+						"name": "alerta_cadena_frio",
+						"type": "bit"
+					},
+					{
+						"name": "fuera_rango_edad",
+						"type": "bit"
+					},
+					{
+						"name": "es_primera_dosis",
+						"type": "bit"
+					},
+					{
+						"name": "numero_dosis",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "lote_vacuna",
+						"type": "varchar"
+					},
+					{
+						"name": "via_aplicacion",
+						"type": "varchar"
+					},
+					{
+						"name": "fuente_datos",
+						"type": "varchar"
+					},
+					{
+						"name": "device_id",
+						"type": "varchar"
+					},
+					{
+						"name": "gps_latitud",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 7
+					},
+					{
+						"name": "gps_longitud",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 7
+					},
+					{
+						"name": "gps_precision_metros",
+						"type": "decimal",
+						"precision": 7,
+						"scale": 2
+					},
+					{
+						"name": "observaciones",
+						"type": "varchar"
+					},
+					{
+						"name": "fecha_carga_gold",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "gold",
+					"table": "HECHOS_VACUNACION"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dw_vacunas')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/silver_catalogo_departamentos')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dw_vacunas",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "silver"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "municipio_id",
+						"type": "varchar"
+					},
+					{
+						"name": "municipio_nombre",
+						"type": "varchar"
+					},
+					{
+						"name": "departamento",
+						"type": "varchar"
+					},
+					{
+						"name": "codigo_departamento",
+						"type": "varchar"
+					},
+					{
+						"name": "zona_geografica",
+						"type": "varchar"
+					},
+					{
+						"name": "es_capital_departamental",
+						"type": "bit"
+					},
+					{
+						"name": "poblacion_depto_estimada",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "fecha_carga_silver",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "silver",
+					"table": "catalogo_departamentos"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dw_vacunas')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/silver_catalogo_establecimientos')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dw_vacunas",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "silver"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "establecimiento_id",
+						"type": "varchar"
+					},
+					{
+						"name": "nombre_establecimiento",
+						"type": "varchar"
+					},
+					{
+						"name": "tipo_establecimiento",
+						"type": "varchar"
+					},
+					{
+						"name": "nivel_atencion",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "zona",
+						"type": "varchar"
+					},
+					{
+						"name": "sedes",
+						"type": "varchar"
+					},
+					{
+						"name": "red_salud",
+						"type": "varchar"
+					},
+					{
+						"name": "departamento",
+						"type": "varchar"
+					},
+					{
+						"name": "municipio",
+						"type": "varchar"
+					},
+					{
+						"name": "latitud",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 7
+					},
+					{
+						"name": "longitud",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 7
+					},
+					{
+						"name": "tiene_cadena_frio",
+						"type": "bit"
+					},
+					{
+						"name": "activo",
+						"type": "bit"
+					},
+					{
+						"name": "fecha_carga_silver",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "silver",
+					"table": "catalogo_establecimientos"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dw_vacunas')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/silver_catalogo_vacunas')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dw_vacunas",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "silver"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "vacuna_id",
+						"type": "varchar"
+					},
+					{
+						"name": "vacuna_nombre",
+						"type": "varchar"
+					},
+					{
+						"name": "enfermedad_previene",
+						"type": "varchar"
+					},
+					{
+						"name": "grupo_pai",
+						"type": "varchar"
+					},
+					{
+						"name": "numero_dosis",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "dosis_descripcion",
+						"type": "varchar"
+					},
+					{
+						"name": "edad_aplicacion_descripcion",
+						"type": "varchar"
+					},
+					{
+						"name": "edad_minima_dias",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "edad_maxima_dias",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "intervalo_minimo_dias",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "via_administracion",
+						"type": "varchar"
+					},
+					{
+						"name": "sitio_aplicacion",
+						"type": "varchar"
+					},
+					{
+						"name": "dosis_ml",
+						"type": "decimal",
+						"precision": 5,
+						"scale": 2
+					},
+					{
+						"name": "condicion_especial",
+						"type": "varchar"
+					},
+					{
+						"name": "fecha_carga_silver",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "silver",
+					"table": "catalogo_vacunas"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dw_vacunas')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/silver_vacunacion_lapaz')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dw_vacunas",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "silver"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "registro_id",
+						"type": "varchar"
+					},
+					{
+						"name": "paciente_id",
+						"type": "varchar"
+					},
+					{
+						"name": "ci_paciente",
+						"type": "varchar"
+					},
+					{
+						"name": "nombre_paciente",
+						"type": "varchar"
+					},
+					{
+						"name": "apellido_paterno",
+						"type": "varchar"
+					},
+					{
+						"name": "apellido_materno",
+						"type": "varchar"
+					},
+					{
+						"name": "sexo",
+						"type": "char"
+					},
+					{
+						"name": "fecha_nacimiento",
+						"type": "date"
+					},
+					{
+						"name": "municipio_residencia",
+						"type": "varchar"
+					},
+					{
+						"name": "comunidad_indigena",
+						"type": "bit"
+					},
+					{
+						"name": "fecha_vacunacion",
+						"type": "date"
+					},
+					{
+						"name": "vacuna_id",
+						"type": "varchar"
+					},
+					{
+						"name": "vacuna_nombre",
+						"type": "varchar"
+					},
+					{
+						"name": "numero_dosis",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "establecimiento_id",
+						"type": "varchar"
+					},
+					{
+						"name": "nombre_establecimiento",
+						"type": "varchar"
+					},
+					{
+						"name": "departamento",
+						"type": "varchar"
+					},
+					{
+						"name": "lote_vacuna",
+						"type": "varchar"
+					},
+					{
+						"name": "temperatura_conservacion",
+						"type": "decimal",
+						"precision": 5,
+						"scale": 2
+					},
+					{
+						"name": "edad_dias_aplicacion",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "via_aplicacion",
+						"type": "varchar"
+					},
+					{
+						"name": "edad_meses_aplicacion",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "alerta_cadena_frio",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "fecha_carga_silver",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "silver",
+					"table": "vacunacion_lapaz"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dw_vacunas')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/silver_vacunacion_rural')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dw_vacunas",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "silver"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "record_id",
+						"type": "varchar"
+					},
+					{
+						"name": "sync_timestamp",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "device_id",
+						"type": "varchar"
+					},
+					{
+						"name": "patient_id",
+						"type": "varchar"
+					},
+					{
+						"name": "patient_ci",
+						"type": "varchar"
+					},
+					{
+						"name": "patient_name",
+						"type": "varchar"
+					},
+					{
+						"name": "patient_last_name_1",
+						"type": "varchar"
+					},
+					{
+						"name": "patient_last_name_2",
+						"type": "varchar"
+					},
+					{
+						"name": "patient_sex",
+						"type": "char"
+					},
+					{
+						"name": "patient_birth_date",
+						"type": "date"
+					},
+					{
+						"name": "patient_department",
+						"type": "varchar"
+					},
+					{
+						"name": "patient_municipality",
+						"type": "varchar"
+					},
+					{
+						"name": "patient_community",
+						"type": "varchar"
+					},
+					{
+						"name": "patient_indigenous",
+						"type": "bit"
+					},
+					{
+						"name": "vaccination_date",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "vaccine_code",
+						"type": "varchar"
+					},
+					{
+						"name": "vaccine_name",
+						"type": "varchar"
+					},
+					{
+						"name": "dose_number",
+						"type": "decimal",
+						"precision": 3,
+						"scale": 1
+					},
+					{
+						"name": "facility_code",
+						"type": "varchar"
+					},
+					{
+						"name": "facility_name",
+						"type": "varchar"
+					},
+					{
+						"name": "lot_number",
+						"type": "varchar"
+					},
+					{
+						"name": "storage_temp_celsius",
+						"type": "decimal",
+						"precision": 5,
+						"scale": 2
+					},
+					{
+						"name": "patient_age_days",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "administration_route",
+						"type": "varchar"
+					},
+					{
+						"name": "gps_latitude",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 7
+					},
+					{
+						"name": "gps_longitude",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 7
+					},
+					{
+						"name": "gps_accuracy_meters",
+						"type": "decimal",
+						"precision": 7,
+						"scale": 2
+					},
+					{
+						"name": "observations",
+						"type": "varchar"
+					},
+					{
+						"name": "patient_age_months",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "cold_chain_alert",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "load_timestamp",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "silver",
+					"table": "vacunacion_rural"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dw_vacunas')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/silver_vacunacion_scz')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dw_vacunas",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "silver"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "registro_id",
+						"type": "varchar"
+					},
+					{
+						"name": "paciente_id",
+						"type": "varchar"
+					},
+					{
+						"name": "ci_paciente",
+						"type": "varchar"
+					},
+					{
+						"name": "nombre_paciente",
+						"type": "varchar"
+					},
+					{
+						"name": "apellido_paterno",
+						"type": "varchar"
+					},
+					{
+						"name": "apellido_materno",
+						"type": "varchar"
+					},
+					{
+						"name": "sexo",
+						"type": "char"
+					},
+					{
+						"name": "fecha_nacimiento",
+						"type": "date"
+					},
+					{
+						"name": "municipio_residencia",
+						"type": "varchar"
+					},
+					{
+						"name": "comunidad_indigena",
+						"type": "bit"
+					},
+					{
+						"name": "fecha_vacunacion",
+						"type": "date"
+					},
+					{
+						"name": "vacuna_id",
+						"type": "varchar"
+					},
+					{
+						"name": "vacuna_nombre",
+						"type": "varchar"
+					},
+					{
+						"name": "numero_dosis",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "establecimiento_id",
+						"type": "varchar"
+					},
+					{
+						"name": "nombre_establecimiento",
+						"type": "varchar"
+					},
+					{
+						"name": "departamento",
+						"type": "varchar"
+					},
+					{
+						"name": "lote_vacuna",
+						"type": "varchar"
+					},
+					{
+						"name": "temperatura_conservacion",
+						"type": "decimal",
+						"precision": 5,
+						"scale": 2
+					},
+					{
+						"name": "edad_dias_aplicacion",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "via_aplicacion",
+						"type": "varchar"
+					},
+					{
+						"name": "aplicacion_oportuna",
+						"type": "bit"
+					},
+					{
+						"name": "edad_meses_aplicacion",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "alerta_cadena_frio",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "fecha_carga_silver",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "silver",
+					"table": "vacunacion_scz"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dw_vacunas')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/vacunacion_lapaz_csv')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "datalake_vacunas",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "bronze"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "vacunacion_lapaz.csv",
+						"container": "bronze"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "id_registro",
+						"type": "String"
+					},
+					{
+						"name": "cod_paciente",
+						"type": "String"
+					},
+					{
+						"name": "documento_identidad",
+						"type": "String"
+					},
+					{
+						"name": "nombres",
+						"type": "String"
+					},
+					{
+						"name": "primer_apellido",
+						"type": "String"
+					},
+					{
+						"name": "segundo_apellido",
+						"type": "String"
+					},
+					{
+						"name": "genero",
+						"type": "String"
+					},
+					{
+						"name": "fec_nacimiento",
+						"type": "String"
+					},
+					{
+						"name": "municipio",
+						"type": "String"
+					},
+					{
+						"name": "pueblo_indigena",
+						"type": "String"
+					},
+					{
+						"name": "fec_vacunacion",
+						"type": "String"
+					},
+					{
+						"name": "cod_vacuna",
+						"type": "String"
+					},
+					{
+						"name": "desc_vacuna",
+						"type": "String"
+					},
+					{
+						"name": "nro_dosis",
+						"type": "String"
+					},
+					{
+						"name": "cod_establecimiento",
+						"type": "String"
+					},
+					{
+						"name": "desc_establecimiento",
+						"type": "String"
+					},
+					{
+						"name": "depto",
+						"type": "String"
+					},
+					{
+						"name": "nro_lote",
+						"type": "String"
+					},
+					{
+						"name": "temp_conservacion",
+						"type": "String"
+					},
+					{
+						"name": "edad_dias",
+						"type": "String"
+					},
+					{
+						"name": "via_aplicacion",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/datalake_vacunas')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/vacunacion_rural_csv')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "datalake_vacunas",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "bronze"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "vacunacion_rural.csv",
+						"container": "bronze"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "record_id",
+						"type": "String"
+					},
+					{
+						"name": "sync_timestamp",
+						"type": "String"
+					},
+					{
+						"name": "device_id",
+						"type": "String"
+					},
+					{
+						"name": "patient_id",
+						"type": "String"
+					},
+					{
+						"name": "patient_ci",
+						"type": "String"
+					},
+					{
+						"name": "patient_name",
+						"type": "String"
+					},
+					{
+						"name": "patient_last_name_1",
+						"type": "String"
+					},
+					{
+						"name": "patient_last_name_2",
+						"type": "String"
+					},
+					{
+						"name": "patient_sex",
+						"type": "String"
+					},
+					{
+						"name": "patient_birth_date",
+						"type": "String"
+					},
+					{
+						"name": "patient_department",
+						"type": "String"
+					},
+					{
+						"name": "patient_municipality",
+						"type": "String"
+					},
+					{
+						"name": "patient_community",
+						"type": "String"
+					},
+					{
+						"name": "patient_indigenous",
+						"type": "String"
+					},
+					{
+						"name": "vaccination_date",
+						"type": "String"
+					},
+					{
+						"name": "vaccine_code",
+						"type": "String"
+					},
+					{
+						"name": "vaccine_name",
+						"type": "String"
+					},
+					{
+						"name": "dose_number",
+						"type": "String"
+					},
+					{
+						"name": "facility_code",
+						"type": "String"
+					},
+					{
+						"name": "facility_name",
+						"type": "String"
+					},
+					{
+						"name": "lot_number",
+						"type": "String"
+					},
+					{
+						"name": "storage_temp_celsius",
+						"type": "String"
+					},
+					{
+						"name": "patient_age_days",
+						"type": "String"
+					},
+					{
+						"name": "administration_route",
+						"type": "String"
+					},
+					{
+						"name": "gps_latitude",
+						"type": "String"
+					},
+					{
+						"name": "gps_longitude",
+						"type": "String"
+					},
+					{
+						"name": "gps_accuracy_meters",
+						"type": "String"
+					},
+					{
+						"name": "observations",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/datalake_vacunas')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/vacunacion_scz_csv')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "datalake_vacunas",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "bronze"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "vacunacion_scz.csv",
+						"container": "bronze"
+					},
+					"columnDelimiter": ";",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "registro_id",
+						"type": "String"
+					},
+					{
+						"name": "paciente_id",
+						"type": "String"
+					},
+					{
+						"name": "ci_paciente",
+						"type": "String"
+					},
+					{
+						"name": "nombre_paciente",
+						"type": "String"
+					},
+					{
+						"name": "apellido_paterno",
+						"type": "String"
+					},
+					{
+						"name": "apellido_materno",
+						"type": "String"
+					},
+					{
+						"name": "sexo",
+						"type": "String"
+					},
+					{
+						"name": "fecha_nacimiento",
+						"type": "String"
+					},
+					{
+						"name": "municipio_residencia",
+						"type": "String"
+					},
+					{
+						"name": "comunidad_indigena",
+						"type": "String"
+					},
+					{
+						"name": "fecha_vacunacion",
+						"type": "String"
+					},
+					{
+						"name": "vacuna_id",
+						"type": "String"
+					},
+					{
+						"name": "vacuna_nombre",
+						"type": "String"
+					},
+					{
+						"name": "numero_dosis",
+						"type": "String"
+					},
+					{
+						"name": "establecimiento_id",
+						"type": "String"
+					},
+					{
+						"name": "nombre_establecimiento",
+						"type": "String"
+					},
+					{
+						"name": "departamento",
+						"type": "String"
+					},
+					{
+						"name": "lote_vacuna",
+						"type": "String"
+					},
+					{
+						"name": "temperatura_conservacion",
+						"type": "String"
+					},
+					{
+						"name": "edad_dias_aplicacion",
+						"type": "String"
+					},
+					{
+						"name": "aplicacion_oportuna",
+						"type": "String"
+					},
+					{
+						"name": "via_administracion",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/datalake_vacunas')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/bronze_catalogo_departamentos')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "bronze"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "catalogo_departamentos_csv",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "silver_catalogo_departamentos",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "derivedColumn2"
+						},
+						{
+							"name": "derivedColumn3"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          municipio_id as string,",
+						"          municipio_nombre as string,",
+						"          departamento as string,",
+						"          codigo_departamento as string,",
+						"          zona_geografica as string,",
+						"          es_capital_departamental as string,",
+						"          poblacion_depto_estimada as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"source1 derive(municipio_id = trim(municipio_id),",
+						"          municipio_nombre = lower(trim(municipio_nombre)),",
+						"          departamento = lower(trim(departamento)),",
+						"          codigo_departamento = trim(codigo_departamento),",
+						"          zona_geografica = trim(zona_geografica)) ~> derivedColumn1",
+						"derivedColumn1 derive(es_capital_departamental = iif(lower(trim(es_capital_departamental))=='true', true(), false()),",
+						"          poblacion_depto_estimada = toInteger(trim(poblacion_depto_estimada)),",
+						"          municipio_id = upper(trim(municipio_id)),",
+						"          codigo_departamento = upper(trim(codigo_departamento))) ~> derivedColumn2",
+						"derivedColumn2 derive(zona_geografica = initCap(lower(trim(zona_geografica))),",
+						"          municipio_nombre = initCap(lower(trim(municipio_nombre))),",
+						"          departamento = initCap(lower(trim(departamento))),",
+						"          poblacion_depto_estimada = iif(isNull(poblacion_depto_estimada) || poblacion_depto_estimada <= 0, 0, poblacion_depto_estimada)) ~> derivedColumn3",
+						"derivedColumn3 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          municipio_id as string,",
+						"          municipio_nombre as string,",
+						"          departamento as string,",
+						"          codigo_departamento as string,",
+						"          zona_geografica as string,",
+						"          es_capital_departamental as boolean,",
+						"          poblacion_depto_estimada as integer,",
+						"          fecha_carga_silver as timestamp",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          municipio_id,",
+						"          municipio_nombre,",
+						"          departamento,",
+						"          codigo_departamento,",
+						"          zona_geografica,",
+						"          es_capital_departamental,",
+						"          poblacion_depto_estimada",
+						"     )) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/catalogo_departamentos_csv')]",
+				"[concat(variables('factoryId'), '/datasets/silver_catalogo_departamentos')]"
+			]
+		}
+	]
+}
